@@ -8,6 +8,19 @@ import icons from 'url:../../img/icons.svg'; //parcel 2 for static assets(img vi
 
 export default class View {
   _data;
+
+  //jsdoc example
+
+  /**
+   * REnder the recieved object to the DOM
+   * @param {Object |Object[]} data The data to be rendered (e.g. reicpe)
+   * @param {boolean} {render=true} If false create markup string instead of renderind to the DOM
+   * @return {undefined |string} A markup string is returned if render=false
+   * @this {Object} View object
+   * @author JS
+   * @todo finish implementation
+   */
+
   render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();
