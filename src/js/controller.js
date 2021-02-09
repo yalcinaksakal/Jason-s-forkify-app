@@ -28,14 +28,14 @@ const controlRecipes = async function () {
 
     recipeView.renderSpinner();
 
+    //0 update results view to mark selected search item.
+    resultsView.update(model.getSearchResultsPage());
+
     //1 Loading Recipe
     await model.loadRecipe(id);
 
     //2 Rendering Recipe
     recipeView.render(model.state.recipe);
-    // import icons so that build version will able to find it in dist
-    // rotating icon while async function awaits response
-    //renderSpinner
   } catch (err) {
     recipeView.renderError();
   }
@@ -77,9 +77,19 @@ const controlPagination = function (gotoPage) {
   paginationView.render(model.state.search);
 };
 
+const controlServings = function (newServings) {
+  //update recipe servings
+  model.updateServings(newServings);
+
+  //update the view
+  //recipeView.render(model.state.recipe);
+  recipeView.update(model.state.recipe); //render function was reloading whole recipe. we dont need this. we will update just changed parts of html
+};
+
 //publisher subscriber pattern
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerPagination(controlPagination);
 };
