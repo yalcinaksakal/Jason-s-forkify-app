@@ -7,7 +7,9 @@ import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
+
 import paginationView from './views/paginationView.js';
+import bookmarksView from './views/bookmarksView.js';
 
 import 'core-js/stable'; //for pollyfilling core-js
 import 'regenerator-runtime/runtime'; //for pollyfilling async await
@@ -30,6 +32,10 @@ const controlRecipes = async function () {
 
     //0 update results view to mark selected search item.
     resultsView.update(model.getSearchResultsPage());
+
+    //update bookmarks view to mark selected  item
+
+    bookmarksView.update(model.state.bookmarks);
 
     //1 Loading Recipe
     await model.loadRecipe(id);
@@ -86,10 +92,31 @@ const controlServings = function (newServings) {
   recipeView.update(model.state.recipe); //render function was reloading whole recipe. we dont need this. we will update just changed parts of html
 };
 
+//Add bookmarks
+const controlAddBookMark = function () {
+  //if not bookmarked earlier add
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  //else remove
+  else model.deleteBookmark(model.state.recipe.id);
+
+  //console.log(model.state.bookmarks);
+  //recipe is bookmarked, update the view
+  recipeView.update(model.state.recipe);
+
+  //render bookmarks
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+};
+
 //publisher subscriber pattern
 const init = function () {
+  bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
+  recipeView.addHandlerAddBookmark(controlAddBookMark);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerPagination(controlPagination);
 };
